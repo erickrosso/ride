@@ -4,32 +4,54 @@ const allRides = getAllRides();
 allRides.forEach(async ([id, value]) => {
   const ride = JSON.parse(value);
   ride.id = id;
-  //   console.log(ride);
+
+  const itemElement = document.createElement("li");
+  itemElement.id = ride.id;
+  itemElement.className =
+    "d-flex p-1 align-items-center shadow-sm justify-content-between gap-3";
+  rideListElement.appendChild(itemElement);
 
   const firstPosition = ride.data[0];
-  console.log(ride);
 
   const firstLocationData = await getLocationData(
     firstPosition.latitude,
     firstPosition.longitude
   );
 
-  const itemElement = document.createElement("li");
-  itemElement.id = ride.id;
+  const mapElement = document.createElement("div");
+  mapElement.style = "width:100px;height:100px";
+  mapElement.classList.add("bg-secondary");
+  mapElement.classList.add("rounded-4");
+
+  const dataElement = document.createElement("div");
+  dataElement.className = "flex-fill d-flex flex-column";
 
   const cityDiv = document.createElement("div");
   cityDiv.innerText = `${firstLocationData.city} - ${firstLocationData.countryCode}`;
+  cityDiv.className = "text-primary mb-2";
 
   const maxSpeedDiv = document.createElement("div");
   maxSpeedDiv.innerText = `Max speed: ${getMaxSeed(ride.data)} km/h`;
+  maxSpeedDiv.className = "h5";
 
   const distanceDiv = document.createElement("div");
   distanceDiv.innerText = `Distance: ${getDistance(ride.data)} km`;
 
-  itemElement.appendChild(cityDiv);
-  itemElement.appendChild(maxSpeedDiv);
-  itemElement.appendChild(distanceDiv);
-  rideListElement.appendChild(itemElement);
+  const durationDiv = document.createElement("div");
+  durationDiv.innerText = `Duration: ${getDuration(ride)}`;
+
+  const dateDiv = document.createElement("div");
+  dateDiv.innerText = getStartDate(ride);
+  dateDiv.className = "text-secondary mt-2";
+
+  dataElement.appendChild(cityDiv);
+  dataElement.appendChild(maxSpeedDiv);
+  dataElement.appendChild(distanceDiv);
+  dataElement.appendChild(durationDiv);
+  dataElement.appendChild(dateDiv);
+
+  itemElement.appendChild(mapElement);
+  itemElement.appendChild(dataElement);
 });
 
 async function getLocationData(latitude, longitude) {
@@ -85,4 +107,27 @@ function getDistance(positions) {
   }
 
   return totalDistance.toFixed(2);
+}
+
+function getDuration(ride) {
+  function format(number, digits) {
+    return String(number.toFixed(0)).padStart(2, "0");
+  }
+
+  const interval = (ride.stopTime - ride.startTime) / 1000;
+
+  const minutes = Math.trunc(interval / 60);
+  const seconds = interval % 60;
+
+  return `${format(minutes, 2)}:${format(seconds, 2)}`;
+}
+
+function getStartDate(ride) {
+  const d = new Date(ride.startTime);
+
+  const day = d.toLocaleDateString("en-us", { day: "numeric" });
+  const month = d.toLocaleDateString("en-us", { month: "long" });
+  const year = d.toLocaleDateString("en-us", { year: "numeric" });
+
+  return `${month} ${day}, ${year}`;
 }

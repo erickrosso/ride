@@ -40,6 +40,6 @@ function addPosition(rideID, position) {
 
 function updateStopTime(rideID) {
   const rideRecord = getRideRecord(rideID);
-  rideRecord.stopTime = Date.now;
+  rideRecord.stopTime = Date.now();
   savaRideRecord(rideID, rideRecord);
 }
