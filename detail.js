@@ -1,22 +1,9 @@
-const rideListElement = document.querySelector("#rideList");
-const allRides = getAllRides();
+const params = new URLSearchParams(window.location.search);
+const rideID = params.get("id");
+const ride = getRideRecord(rideID);
 
-allRides.forEach(async ([id, value]) => {
-  const ride = JSON.parse(value);
-  ride.id = id;
-
-  const itemElement = document.createElement("li");
-  itemElement.id = ride.id;
-  itemElement.className =
-    "d-flex p-1 align-items-center shadow-sm justify-content-between gap-3";
-  rideListElement.appendChild(itemElement);
-
-  itemElement.addEventListener("click", () => {
-    window.location.href = `./detail.html?id=${ride.id}`;
-  });
-
+document.addEventListener("DOMContentLoaded", async () => {
   const firstPosition = ride.data[0];
-
   const firstLocationData = await getLocationData(
     firstPosition.latitude,
     firstPosition.longitude
@@ -54,6 +41,8 @@ allRides.forEach(async ([id, value]) => {
   dataElement.appendChild(durationDiv);
   dataElement.appendChild(dateDiv);
 
-  itemElement.appendChild(mapElement);
-  itemElement.appendChild(dataElement);
+  //   itemElement.appendChild(mapElement);
+  //   itemElement.appendChild(dataElement);
+
+  document.querySelector("#data").appendChild(dataElement);
 });
