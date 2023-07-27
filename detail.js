@@ -45,4 +45,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   //   itemElement.appendChild(dataElement);
 
   document.querySelector("#data").appendChild(dataElement);
+
+  const map = L.map("mapDetail");
+  map.setView([firstPosition.latitude, firstPosition.longitude], 17);
+
+  var OpenStreetMap_HOT = L.tileLayer(
+    "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+    }
+  ).addTo(map);
+
+  const positionsArray = ride.data.map((position) => {
+    return [position.latitude, position.longitude];
+  });
+
+  const polyline = L.polyline(positionsArray, { color: "#000000" });
+  polyline.addTo(map);
+
+  map.fitBounds(polyline.getBounds());
 });
